@@ -18,9 +18,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UsuarioRegistroDto {
-    @NotBlank(message = "El nombre es obligatorio")
+    @NotBlank(message = "El nombre es obligatorio dese backend")
     private String nombre;
-    @NotBlank(message = "El apellido es obligatorio")
+    @NotBlank(message = "El apellido es obligatorio tambien dese backend    ")
     private String apellido;
     private Documento documento;
     private Direccion direccion;
