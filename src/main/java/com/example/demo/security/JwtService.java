@@ -1,0 +1,54 @@
+package com.example.demo.security;
+
+import java.security.Key;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+@Service
+public class JwtService {
+
+    private final String CLAVE_SECRETA = "clave-secreta-1234567890";
+
+    private Key obtenerClave() {
+        return Keys.hmacShaKeyFor(CLAVE_SECRETA.getBytes());
+    }
+
+    // Generar un token JWT
+    public String generarToken(String usuario, List<String> roles) {
+        return Jwts.builder()// Construye el token JWT
+                .setSubject(usuario)// Establece el sujeto del token (el usuario)
+                .claim("roles", roles)// Agrega los roles del usuario
+                .setIssuedAt(new Date()) // Establece la fecha de emisión del token
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // expiración del token (1 hora)
+                // .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .signWith(obtenerClave(), SignatureAlgorithm.HS256) // Firma el token con la clave secreta
+                .compact();
+    }
+
+    // extraer Datos del token tambien llamado claims // es el generico del token
+    public Claims obtenerClaims(String token) {
+        return Jwts.parserBuilder() // Analiza el token JWT
+                .setSigningKey(obtenerClave()) // Establece la clave de firma
+                .build() // Construye el analizador
+                .parseClaimsJws(token) // Analiza el token y devuelve los claims
+                .getBody();// Obtiene el cuerpo del token (claims)
+    }
+
+    // Extraer roles del token
+    public List<String> extraerRoles(String token) {
+        return obtenerClaims(token).get("roles", List.class); // Obtiene los roles del token
+    }
+
+    // extraer usuario del token
+    public String extraerUsuario(String token) {
+        return obtenerClaims(token).getSubject(); // Obtiene el sujeto del token (el usuario)
+    }
+
+}
