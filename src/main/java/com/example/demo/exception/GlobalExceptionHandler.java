@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now()); // Momento del error "Fecha".
         response.put("status", 400); // Código HTTP.
-        response.put("error", "Validacion de campos"); // Tipo de error.
+        response.put("error", "Validacion de campos desde el backend"); // Tipo de error.
         response.put("path", request.getRequestURI()); // Endpoint donde ocurrió el error.
         response.put("errors", errores);// Mapa con los errores de validación (campo -> mensaje de error).
 
