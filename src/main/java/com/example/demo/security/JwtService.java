@@ -16,7 +16,7 @@ public class JwtService {
 
     // Esta es la clave para firmar el token
     // Debe tener mínimo 32 caracteres
-    private final String CLAVE_SECRETA = "clave-secreta-1234567890";
+    private final String CLAVE_SECRETA = "clave-secreta-1234567890-000000000";
 
     // Libreria Key -> java.security.Key;
     private Key obtenerClave() {

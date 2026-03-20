@@ -3,10 +3,12 @@ package com.example.demo.security;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
 
 import com.example.demo.models.UsuarioAuth;
 import com.example.demo.repositories.UsuarioAuthRepository;
 
+@Service
 public class DetallesUsuarioService implements UserDetailsService {
 
     // Inyeccion dependencias de UsuarioAuthRepository para consultas con la base de
@@ -28,7 +30,8 @@ public class DetallesUsuarioService implements UserDetailsService {
                                                              // porque: Es parte del contrato de Spring Security y
                                                              // Spring lo llama internamente
 
-        UsuarioAuth usuario = uar.findByUser(username).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        UsuarioAuth usuario = uar.findByUser(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado sp"));
 
         return User.builder()
                 .username(usuario.getUser()) // Establece el nombre de usuario
