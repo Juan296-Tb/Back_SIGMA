@@ -15,11 +15,9 @@ import lombok.NoArgsConstructor;
 @Data
 public class UsuarioAuth {
     @Id
-    private String id; // ID único para cada usuario el mismo del perfil
-    private String user; // dato de usuario para autenticación
-    private String pass; // dato de contraseña para autenticación encriptada(bcrypt)
-    // private List<String> roles; // lista de roles para autorización (ejemplo:
-    // "ROLE_USER", "ROLE_ADMIN")
-    private List<Rol> roles; // lista de roles usando enum
+    private String id;
+    private String user;
+    private String pass;
+    private List<Rol> roles;
 
 }

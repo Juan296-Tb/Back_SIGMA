@@ -17,16 +17,16 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Usuario {
     @Id
-    private String id; // ID único para cada usuario el mismo del autentificación
+    private String id; 
     @NotBlank
-    private String nom; // nombre del usuario
-    @NotNull
-    private String ape; // apellido del usuario
-    @NotNull
-    private Documento doc; // documento de identidad del usuario objeto con tipo y número
-    private Direccion dir; // dirección del usuario objeto con calle, numero, ciudad, y código postal
-    // private List<Direccion> dire; // lista de direcciones
+    private String nom;
     @NotBlank
-    private String email; // correo electrónico del usuario
+    private String email;
+    @NotNull
+    private String tele;
+    @NotNull
+    private String empr;
+    @NotNull
+    private Documento doc; 
 
 }

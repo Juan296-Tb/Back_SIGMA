@@ -2,7 +2,6 @@ package com.example.demo.dto;
 
 import java.util.List;
 
-import com.example.demo.models.Direccion;
 import com.example.demo.models.Documento;
 import com.example.demo.models.Rol;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,13 +17,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UsuarioRegistroDto {
-    @NotBlank(message = "El nombre es obligatorio dese backend")
+    @NotBlank(message = "El Nombre es obligatorio")
     private String nombre;
-    @NotBlank(message = "El apellido es obligatorio tambien dese backend    ")
-    private String apellido;
-    private Documento documento;
-    private Direccion direccion;
+    @NotBlank(message = "El email es obligatorio")
     private String email;
+    private String telefono;
+    private String empresa;
+    private Documento documento;
     private String usuario;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

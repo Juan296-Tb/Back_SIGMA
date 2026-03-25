@@ -90,10 +90,10 @@ public class UsuarioServiceImple implements UsuarioService {
         Usuario perfil = Usuario.builder()
                 .id(UUID.randomUUID().toString()) // mismo ID para perfil y auth
                 .nom(dto.getNombre())
-                .ape(dto.getApellido())
-                .doc(dto.getDocumento())
-                .dir(dto.getDireccion())
                 .email(dto.getEmail())
+                .tele(dto.getTelefono())
+                .empr(dto.getEmpresa())
+                .doc(dto.getDocumento())
                 .build();
 
         Usuario perfilGuardado = userRepo.save(perfil);
