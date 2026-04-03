@@ -4,5 +4,5 @@ public enum Rol {
     Admin,
     Gestor_Tickets,
     Tecni_Mantenimiento,
-    Responsable,
+    Responsable
 }

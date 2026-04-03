@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.dto.UsuarioDto;
 import com.example.demo.dto.UsuarioRegistroDto;
 import com.example.demo.mapper.UsuarioMapper;
+import com.example.demo.models.Rol;
 import com.example.demo.models.Usuario;
 import com.example.demo.models.UsuarioAuth;
 import com.example.demo.repositories.UsuarioAuthRepository;
@@ -19,11 +20,8 @@ import com.example.demo.repositories.UsuarioRepository;
 public class UsuarioServiceImple implements UsuarioService {
 
     private final UsuarioRepository userRepo;
-
     private final UsuarioAuthRepository authRepo;
-
     private final UsuarioMapper userMapper;
-
     private final PasswordEncoder passwordEncoder;
 
     public UsuarioServiceImple(UsuarioRepository userRepo, UsuarioAuthRepository authRepo, UsuarioMapper userMapper,
@@ -34,20 +32,17 @@ public class UsuarioServiceImple implements UsuarioService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Crear un nuevo usuario
     @Override
     public UsuarioDto create(UsuarioDto usuarioDto) {
         Usuario usuario = userMapper.toUsuario(usuarioDto);
         return userMapper.toDto(userRepo.save(usuario));
     }
 
-    // Listar todos los usuarios
     @Override
     public List<UsuarioDto> ListUsuarios() {
         return userMapper.toDtoList(userRepo.findAll());
     }
 
-    // Actualizar un usuario existente
     @Override
     public UsuarioDto update(String id, UsuarioDto usuarioDto) {
         Usuario usuario = userRepo.findById(id)
@@ -56,7 +51,6 @@ public class UsuarioServiceImple implements UsuarioService {
         return userMapper.toDto(userRepo.save(usuario));
     }
 
-    // Eliminar un usuario por su ID
     @Override
     public void delete(String id) {
         if (!userRepo.existsById(id)) {
@@ -65,7 +59,6 @@ public class UsuarioServiceImple implements UsuarioService {
         userRepo.deleteById(id);
     }
 
-    // Buscar un usuario por su número de documento
     @Override
     public UsuarioDto UsuarioByDocNum(String docnum) {
         Usuario usuario = userRepo.findByDocNum(docnum)
@@ -73,22 +66,28 @@ public class UsuarioServiceImple implements UsuarioService {
         return userMapper.toDto(usuario);
     }
 
-    // Buscar un usuario por su número de documento (método alternativo) para menjo
-    // de excepciones
     @Override
     public UsuarioDto UsuarioByDocum(String docnum) {
         return userRepo.findByDocNum(docnum)
                 .map(userMapper::toDto)
                 .orElseThrow(() -> new RuntimeException(
-                        "Usuario no encontrado con  el documento: " + docnum));
+                        "Usuario no encontrado con el documento: " + docnum));
     }
 
     @Transactional
     @Override
     public UsuarioRegistroDto registrarUsuario(UsuarioRegistroDto dto) {
-        // 1. Guardar perfil
+
+        // 1. Asignar rol Responsable automáticamente si no viene 
+        if (dto.getRoles() == null || dto.getRoles().isEmpty()) {
+            dto.setRoles(List.of(Rol.Responsable));
+        }
+
+        // 2. Guardar perfil en UsuariosPerfil
+        String sharedId = UUID.randomUUID().toString();
+
         Usuario perfil = Usuario.builder()
-                .id(UUID.randomUUID().toString()) // mismo ID para perfil y auth
+                .id(sharedId)
                 .nom(dto.getNombre())
                 .email(dto.getEmail())
                 .tele(dto.getTelefono())
@@ -96,18 +95,22 @@ public class UsuarioServiceImple implements UsuarioService {
                 .doc(dto.getDocumento())
                 .build();
 
-        Usuario perfilGuardado = userRepo.save(perfil);
+        userRepo.save(perfil);
 
-        // 2. Guardar auth
+        // 3. Usar email como username si no viene el campo usuario
+        String username = (dto.getUsuario() != null && !dto.getUsuario().isBlank())
+                ? dto.getUsuario()
+                : dto.getEmail();
+
+        // 4. Guardar auth en UsuariosAuth
         UsuarioAuth auth = new UsuarioAuth();
-        auth.setId(perfilGuardado.getId()); // mismo ID
-        auth.setUser(dto.getUsuario());
-        auth.setPass(passwordEncoder.encode(dto.getPassword())); // encriptar
+        auth.setId(sharedId);
+        auth.setUser(username);
+        auth.setPassword(passwordEncoder.encode(dto.getPassword()));
         auth.setRoles(dto.getRoles());
 
         authRepo.save(auth);
 
         return dto;
     }
-
 }

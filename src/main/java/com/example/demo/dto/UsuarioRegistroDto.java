@@ -23,7 +23,9 @@ public class UsuarioRegistroDto {
     private String email;
     private String telefono;
     private String empresa;
+    @JsonProperty("documento") 
     private Documento documento;
+    @JsonProperty("usuario")
     private String usuario;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

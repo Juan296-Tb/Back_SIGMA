@@ -24,10 +24,10 @@ public class MongoDatabaseValidator implements CommandLineRunner {
                 .listDatabaseNames()
                 .into(new ArrayList<>());
 
-        if (!databases.contains("UsuarioSigma")) {
-            throw new RuntimeException("ERROR: La base de datos 'UsuarioSigma' no existe en MongoDB");
+        if (!databases.contains("Registro")) {
+            throw new RuntimeException("ERROR: La base de datos 'Registro' no existe en MongoDB");
         }
 
-        System.out.println("Base de datos 'UsuarioSigma' verificada correctamente.");
+        System.out.println("Base de datos 'Registro' verificada correctamente.");
     }
 }

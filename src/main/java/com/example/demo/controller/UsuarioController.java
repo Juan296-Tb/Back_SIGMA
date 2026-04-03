@@ -81,6 +81,7 @@ public class UsuarioController {
     public ResponseEntity<?> registrar(@Valid @RequestBody UsuarioRegistroDto dto) {
         System.out.println("DTO recibido: " + dto);
         System.out.println("Roles: " + dto.getRoles());
+        System.out.println("Documento: " + dto.getDocumento());
         UsuarioRegistroDto creado = usuarioService.registrarUsuario(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
