@@ -1,4 +1,3 @@
-
 package com.example.demo.dto;
 
 import java.time.LocalDateTime;
@@ -19,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class TicketDto {
+
     private String id;
 
     @NotBlank(message = "El título es obligatorio")
@@ -38,6 +38,10 @@ public class TicketDto {
     private String activoId;
     private String solicitanteId;
     private String asignadoId;
+
+    // 🔥 NUEVOS CAMPOS (YA SEGUROS PARA FRONTEND)
+    private String activoNombre;
+    private String responsableNombre;
 
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;

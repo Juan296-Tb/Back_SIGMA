@@ -22,9 +22,11 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final JwtFilter jwtFilter;
 
-    public SecurityConfig(DetallesUsuarioService detallesUsuarioService,
+    public SecurityConfig(
+        DetallesUsuarioService detallesUsuarioService,
         PasswordEncoder passwordEncoder,
-        JwtFilter jwtFilter) {
+        JwtFilter jwtFilter
+    ) {
         this.detallesUsuarioService = detallesUsuarioService;
         this.passwordEncoder = passwordEncoder;
         this.jwtFilter = jwtFilter;
@@ -36,25 +38,36 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/auth/**", "/api/usuarios/registrar").permitAll()
-                .requestMatchers("/api/activos", "/api/activos/**").permitAll()
-                .requestMatchers("/api/usuarios", "/api/usuarios/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // 👈 agregado
+        .requestMatchers("/auth/**").permitAll()
+        .requestMatchers("/api/usuarios/**").permitAll()
+        .requestMatchers("/api/activos/**").permitAll()
+        .requestMatchers("/api/tickets/**").permitAll()
+        .anyRequest().authenticated()
+)
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        config.setAllowedOrigins(List.of(
+            "http://localhost:5173",
+            "http://localhost:5174"
+        ));
+
+        config.setAllowedMethods(List.of(
+            "GET", "POST", "PUT", "DELETE", "OPTIONS"
+        ));
+
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
 

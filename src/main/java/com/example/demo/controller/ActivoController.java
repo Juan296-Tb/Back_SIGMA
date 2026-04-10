@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/activos")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*") // ✅ FIX FRONTEND
 public class ActivoController {
 
     private final MongoTemplate sigmaMongoTemplate;

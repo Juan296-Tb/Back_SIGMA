@@ -4,14 +4,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.dto.UsuarioDto;
 import com.example.demo.dto.UsuarioRegistroDto;
@@ -21,29 +15,26 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@CrossOrigin(origins = "*") // ✅ FIX FRONTEND
 public class UsuarioController {
+
     private final UsuarioService usuarioService;
 
     public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
-    // crear un nuevo usuario
     @PostMapping()
     public ResponseEntity<UsuarioDto> crear(@RequestBody UsuarioDto usuarioDto) {
         UsuarioDto creado = usuarioService.create(usuarioDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
-        // return new ResponseEntity<>(creado, HttpStatus.CREATED);
-        // return ResponseEntity.ok(usuarioService.create(usuarioDto));
     }
 
-    // listar todos los usuarios
     @GetMapping
     public ResponseEntity<List<UsuarioDto>> todos() {
         return ResponseEntity.ok(usuarioService.ListUsuarios());
     }
 
-    // actualizar un usuario existente por su ID
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioDto> actualizar(@PathVariable String id, @RequestBody UsuarioDto usuarioDto) {
         return ResponseEntity.ok(usuarioService.update(id, usuarioDto));
@@ -66,7 +57,6 @@ public class UsuarioController {
             UsuarioDto usuario = usuarioService.UsuarioByDocNum(docnum);
             return ResponseEntity.ok(usuario);
         } catch (RuntimeException ex) {
-            // Aquí capturas la excepción y devuelves el mensaje al cliente
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
@@ -79,11 +69,15 @@ public class UsuarioController {
 
     @PostMapping("/registrar")
     public ResponseEntity<?> registrar(@Valid @RequestBody UsuarioRegistroDto dto) {
-        System.out.println("DTO recibido: " + dto);
-        System.out.println("Roles: " + dto.getRoles());
-        System.out.println("Documento: " + dto.getDocumento());
         UsuarioRegistroDto creado = usuarioService.registrarUsuario(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
+    @GetMapping("/ActRes")
+    public ResponseEntity<UsuarioDto> usuarioActual() {
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+        return ResponseEntity.ok(usuarioService.buscarPorUsername(username));
+    }
 }
