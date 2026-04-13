@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.demo.dto.UsuarioDto;
 import com.example.demo.dto.UsuarioRegistroDto;
+
 public interface UsuarioService {
     UsuarioDto create(UsuarioDto usuarioDto);
     List<UsuarioDto> ListUsuarios();
@@ -13,4 +14,5 @@ public interface UsuarioService {
     UsuarioDto UsuarioByDocum(String docnum);
     UsuarioRegistroDto registrarUsuario(UsuarioRegistroDto dto);
     UsuarioDto buscarPorUsername(String username);
+    void cambiarRol(String id, String rol);
 }

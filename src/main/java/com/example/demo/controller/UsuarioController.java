@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "*") // ✅ FIX FRONTEND
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -79,5 +80,13 @@ public class UsuarioController {
                 .getAuthentication()
                 .getName();
         return ResponseEntity.ok(usuarioService.buscarPorUsername(username));
+    }
+
+    @PutMapping("/{id}/rol")
+    public ResponseEntity<?> cambiarRol(
+            @PathVariable String id,
+            @RequestBody Map<String, String> body) {
+        usuarioService.cambiarRol(id, body.get("rol"));
+        return ResponseEntity.ok().build();
     }
 }

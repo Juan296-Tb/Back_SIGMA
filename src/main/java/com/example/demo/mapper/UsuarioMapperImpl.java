@@ -1,14 +1,23 @@
 package com.example.demo.mapper;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
 import com.example.demo.dto.UsuarioDto;
 import com.example.demo.models.Usuario;
+import com.example.demo.models.UsuarioAuth;
+import com.example.demo.repositories.UsuarioAuthRepository;
 
 @Component
 public class UsuarioMapperImpl implements UsuarioMapper {
+
+    private final UsuarioAuthRepository authRepo;
+
+    public UsuarioMapperImpl(UsuarioAuthRepository authRepo) {
+        this.authRepo = authRepo;
+    }
 
     @Override
     public Usuario toUsuario(UsuarioDto usuarioDto) {
@@ -22,16 +31,19 @@ public class UsuarioMapperImpl implements UsuarioMapper {
                 .empr(usuarioDto.getEmpresa())
                 .doc(usuarioDto.getDocumento())
                 .build();
-        /**
-         * Convierte un DTO en una entidad Usuario.
-         * Usamos Builder para inicializar el objeto de forma clara y segura.
-         */
     }
 
     @Override
     public UsuarioDto toDto(Usuario usuario) {
         if (usuario == null)
             return null;
+
+        List<com.example.demo.models.Rol> roles = null;
+        Optional<UsuarioAuth> auth = authRepo.findById(usuario.getId());
+        if (auth.isPresent()) {
+            roles = auth.get().getRoles();
+        }
+
         return UsuarioDto.builder()
                 .id(usuario.getId())
                 .nombre(usuario.getNom())
@@ -39,13 +51,8 @@ public class UsuarioMapperImpl implements UsuarioMapper {
                 .telefono(usuario.getTele())
                 .empresa(usuario.getEmpr())
                 .documento(usuario.getDoc())
+                .roles(roles)
                 .build();
-        /**
-         * Convierte una entidad Usuario en un DTO.
-         * Builder permite mapear campo por campo sin depender del orden del
-         * constructor.
-         */
-
     }
 
     @Override
@@ -55,10 +62,6 @@ public class UsuarioMapperImpl implements UsuarioMapper {
         return usuarios.stream()
                 .map(this::toDto)
                 .toList();
-        /**
-         * Convierte una lista de entidades Usuario en una lista de DTOs.
-         * Usamos stream + map para aplicar el método toUsuarioDto a cada elemento.
-         */
     }
 
     @Override
@@ -69,18 +72,10 @@ public class UsuarioMapperImpl implements UsuarioMapper {
         if (usuarioDto == null) {
             throw new IllegalArgumentException("El DTO UsuarioPerfilDTO no puede ser nulo");
         }
-        // Si ambos son válidos, actualizamos los campos de la entidad con los datos del
-        // DTO
         usuario.setNom(usuarioDto.getNombre());
         usuario.setEmail(usuarioDto.getEmail());
         usuario.setTele(usuarioDto.getTelefono());
         usuario.setEmpr(usuarioDto.getEmpresa());
         usuario.setDoc(usuarioDto.getDocumento());
-        /**
-         * Actualiza una entidad Usuario existente con los datos de un DTO.
-         * Aquí no usamos Builder porque ya tenemos el objeto creado,
-         * simplemente actualizamos sus campos con setters.
-         */
     }
-
 }
