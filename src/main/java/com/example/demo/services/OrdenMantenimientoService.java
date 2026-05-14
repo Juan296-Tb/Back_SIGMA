@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.OrdenMantenimientoDto;
 import com.example.demo.mapper.OrdenMantenimientoMapper;
+import com.example.demo.models.EstadoOrden;
 import com.example.demo.models.OrdenMantenimiento;
 import com.example.demo.repositories.OrdenMantenimientoRepository;
 
@@ -41,28 +42,53 @@ public class OrdenMantenimientoService {
         OrdenMantenimiento existente = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
 
-        // Actualización campo por campo
+        existente.setOrdenId(dto.getOrdenId());
         existente.setDescripcion(dto.getDescripcion());
         existente.setEstado(dto.getEstado());
+        existente.setPrioridad(dto.getPrioridad());
+        existente.setTipo(dto.getTipo());
         existente.setActivoId(dto.getActivoId());
+        existente.setActivoNombre(dto.getActivoNombre());
         existente.setActivoInfo(dto.getActivoInfo());
+        existente.setUbicacion(dto.getUbicacion());
         existente.setTecnicoId(dto.getTecnicoId());
         existente.setTecnicoNombre(dto.getTecnicoNombre());
-        existente.setTipo(dto.getTipo());
         existente.setTicketId(dto.getTicketId());
-        existente.setPrioridad(dto.getPrioridad());
+        existente.setOrigen(dto.getOrigen());
+        existente.setOrigenId(dto.getOrigenId());
         existente.setVentana(dto.getVentana());
         existente.setVentanaSub(dto.getVentanaSub());
+        existente.setProgreso(dto.getProgreso());
         existente.setFechaProgramada(dto.getFechaProgramada());
         existente.setFechaInicio(dto.getFechaInicio());
         existente.setFechaFin(dto.getFechaFin());
         existente.setObservaciones(dto.getObservaciones());
         existente.setCosto(dto.getCosto());
-
         return mapper.toDto(repository.save(existente));
     }
 
     public void eliminar(String id) {
         repository.deleteById(id);
+    }
+
+    public List<OrdenMantenimientoDto> filtrar(String estado, String prioridad) {
+        return repository.findAll().stream()
+            .filter(o -> estado == null || o.getEstado().name().equalsIgnoreCase(estado))
+            .filter(o -> prioridad == null || o.getPrioridad().name().equalsIgnoreCase(prioridad))
+            .map(mapper::toDto)
+            .collect(Collectors.toList());
+    }
+
+    public List<OrdenMantenimientoDto> listarPorTecnico(String tecnicoId) {
+        return repository.findByTecnicoId(tecnicoId).stream()
+            .map(mapper::toDto)
+            .collect(Collectors.toList());
+    }
+
+    public OrdenMantenimientoDto cambiarEstado(String id, String nuevoEstado) {
+        OrdenMantenimiento orden = repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+        orden.setEstado(EstadoOrden.valueOf(nuevoEstado));
+        return mapper.toDto(repository.save(orden));
     }
 }

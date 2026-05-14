@@ -18,18 +18,23 @@ import lombok.NoArgsConstructor;
 public class OrdenMantenimiento {
     @Id
     private String id;
+    private String ordenId;   
     private String descripcion;
     private EstadoOrden estado;
+    private PrioridadTicket prioridad;
+    private TipoMantenimiento tipo;
     private String activoId;
     private String activoNombre;
     private String activoInfo;
+    private String ubicacion;       
     private String tecnicoId;
     private String tecnicoNombre;
-    private TipoMantenimiento tipo;
     private String ticketId;
-    private PrioridadTicket prioridad;
+    private String origen;
+    private String origenId;
     private String ventana;
     private String ventanaSub;
+    private int progreso;  
     private LocalDateTime fechaProgramada;
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFin;

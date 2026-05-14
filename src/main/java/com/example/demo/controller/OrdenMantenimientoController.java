@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/ordenes")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class OrdenMantenimientoController {
 
     private final OrdenMantenimientoService service;
@@ -44,5 +45,27 @@ public class OrdenMantenimientoController {
     public ResponseEntity<Void> eliminar(@PathVariable String id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Filtrar por estado y/o prioridad — para los botones de filtro del front
+    @GetMapping("/filtrar")
+    public ResponseEntity<List<OrdenMantenimientoDto>> filtrar(
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) String prioridad) {
+        return ResponseEntity.ok(service.filtrar(estado, prioridad));
+    }
+
+    // Órdenes de un técnico específico — para el home del técnico
+    @GetMapping("/tecnico/{tecnicoId}")
+    public ResponseEntity<List<OrdenMantenimientoDto>> porTecnico(@PathVariable String tecnicoId) {
+        return ResponseEntity.ok(service.listarPorTecnico(tecnicoId));
+    }
+
+    // Cambiar solo el estado — para el PATCH rápido desde el front
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<OrdenMantenimientoDto> cambiarEstado(
+            @PathVariable String id,
+            @RequestParam String nuevoEstado) {
+        return ResponseEntity.ok(service.cambiarEstado(id, nuevoEstado));
     }
 }

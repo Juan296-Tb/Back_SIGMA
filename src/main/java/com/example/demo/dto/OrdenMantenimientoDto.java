@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OrdenMantenimientoDto {
     private String id;
+    private String ordenId; 
 
     @NotBlank(message = "La descripción es obligatoria")
     private String descripcion;
@@ -30,8 +31,9 @@ public class OrdenMantenimientoDto {
 
     @NotBlank(message = "El activo es obligatorio")
     private String activoId;
-
+    private String activoNombre;
     private String activoInfo;
+    private String ubicacion;
 
     @NotBlank(message = "El técnico es obligatorio")
     private String tecnicoId;
@@ -39,10 +41,13 @@ public class OrdenMantenimientoDto {
     private String tecnicoNombre;
 
     private String ticketId;
+    private String origen;
+    private String origenId;
     private PrioridadTicket prioridad;
 
     private String ventana;
     private String ventanaSub;
+    private int progreso;
 
     private LocalDateTime fechaProgramada;
     private LocalDateTime fechaInicio;

@@ -19,17 +19,24 @@ import lombok.NoArgsConstructor;
 public class Ticket {
     @Id
     private String id;
+
+    private String numero;
     private String titulo;
     private String descripcion;
     private TipoTicket tipo;
     private EstadoTicket estado;
     private PrioridadTicket prioridad;
     private String activoId;
+    private String activo;
     private String solicitanteId;
+    private String responsable;
     private String asignadoId;
+    private String tecnicoNombre;
+    private String ubicacion;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
     private LocalDateTime fechaCierre;
     private String comentario;
     private String archivoNombre;
+    private String archivoUrl;
 }

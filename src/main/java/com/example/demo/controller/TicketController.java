@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.dto.TicketDto;
+import com.example.demo.models.EstadoTicket;
 import com.example.demo.models.Ticket;
 import com.example.demo.repositories.TicketRepository;
 import com.example.demo.repositories.ActivoRepository;
@@ -20,6 +21,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/tickets")
 @Validated
+@CrossOrigin(origins = "*")
 public class TicketController {
 
     @Autowired
@@ -110,6 +112,61 @@ public class TicketController {
 
         ticketRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Filtrar por estado y/o prioridad
+    @GetMapping("/filtrar")
+    public ResponseEntity<List<TicketDto>> filtrar(
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) String prioridad) {
+
+        List<TicketDto> resultado = ticketRepository.findAll()
+                .stream()
+                .filter(t -> estado == null || t.getEstado().name().equalsIgnoreCase(estado))
+                .filter(t -> prioridad == null || t.getPrioridad().name().equalsIgnoreCase(prioridad))
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(resultado);
+    }
+
+    // Tickets asignados a un técnico — para el home del técnico
+    @GetMapping("/tecnico/{tecnicoId}")
+    public ResponseEntity<List<TicketDto>> porTecnico(@PathVariable String tecnicoId) {
+        List<TicketDto> resultado = ticketRepository.findAll()
+                .stream()
+                .filter(t -> tecnicoId.equals(t.getAsignadoId()))
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(resultado);
+    }
+
+    // Cambiar solo el estado
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<TicketDto> cambiarEstado(
+            @PathVariable String id,
+            @RequestParam String nuevoEstado) {
+            
+        return ticketRepository.findById(id)
+                .map(ticket -> {
+                    ticket.setEstado(EstadoTicket.valueOf(nuevoEstado));
+                    ticket.setFechaActualizacion(LocalDateTime.now());
+                    return ResponseEntity.ok(mapToDto(ticketRepository.save(ticket)));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Contar tickets activos de un técnico — para el cuadro del home
+    @GetMapping("/tecnico/{tecnicoId}/count")
+    public ResponseEntity<Long> contarPorTecnico(@PathVariable String tecnicoId) {
+        long count = ticketRepository.findAll()
+                .stream()
+                .filter(t -> tecnicoId.equals(t.getAsignadoId()))
+                .filter(t -> !t.getEstado().name().equals("CERRADO"))
+                .count();
+
+        return ResponseEntity.ok(count);
     }
 
     // ======================
