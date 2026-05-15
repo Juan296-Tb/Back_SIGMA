@@ -22,6 +22,13 @@ public class OrdenMantenimientoService {
 
     public OrdenMantenimientoDto crear(OrdenMantenimientoDto dto) {
         OrdenMantenimiento entity = mapper.toEntity(dto);
+
+        // Generar ordenId automático si no viene del frontend
+        if (entity.getOrdenId() == null || entity.getOrdenId().isBlank()) {
+            String numero = String.format("%03d", (int)(Math.random() * 900) + 100);
+            entity.setOrdenId("OT-" + numero);
+        }
+
         return mapper.toDto(repository.save(entity));
     }
 

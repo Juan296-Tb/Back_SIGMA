@@ -17,17 +17,23 @@ public class OrdenMantenimientoMapperImpl implements OrdenMantenimientoMapper {
 
         return OrdenMantenimiento.builder()
                 .id(dto.getId())
+                .ordenId(dto.getOrdenId())
                 .descripcion(dto.getDescripcion())
                 .estado(dto.getEstado())
                 .activoId(dto.getActivoId())
+                .activoNombre(dto.getActivoNombre())
                 .activoInfo(dto.getActivoInfo())
+                .ubicacion(dto.getUbicacion())
                 .tecnicoId(dto.getTecnicoId())
                 .tecnicoNombre(dto.getTecnicoNombre())
                 .tipo(dto.getTipo())
                 .ticketId(dto.getTicketId())
+                .origen(dto.getOrigen())
+                .origenId(dto.getOrigenId())
                 .prioridad(dto.getPrioridad())
                 .ventana(dto.getVentana())
                 .ventanaSub(dto.getVentanaSub())
+                .progreso(dto.getProgreso())
                 .fechaProgramada(dto.getFechaProgramada())
                 .fechaInicio(dto.getFechaInicio())
                 .fechaFin(dto.getFechaFin())
@@ -47,18 +53,22 @@ public class OrdenMantenimientoMapperImpl implements OrdenMantenimientoMapper {
             return null;
 
         return OrdenMantenimientoDto.builder()
-                .id(entity.getId())
+                .id(entity.getId()).ordenId(entity.getOrdenId())
                 .descripcion(entity.getDescripcion())
                 .estado(entity.getEstado())
                 .activoId(entity.getActivoId())
+                .activoNombre(entity.getActivoNombre())
                 .activoInfo(entity.getActivoInfo())
                 .tecnicoId(entity.getTecnicoId())
                 .tecnicoNombre(entity.getTecnicoNombre())
                 .tipo(entity.getTipo())
                 .ticketId(entity.getTicketId())
+                .origen(entity.getOrigen())
+                .origenId(entity.getOrigenId())
                 .prioridad(entity.getPrioridad())
                 .ventana(entity.getVentana())
                 .ventanaSub(entity.getVentanaSub())
+                .progreso(entity.getProgreso())
                 .fechaProgramada(entity.getFechaProgramada())
                 .fechaInicio(entity.getFechaInicio())
                 .fechaFin(entity.getFechaFin())
@@ -110,6 +120,12 @@ public class OrdenMantenimientoMapperImpl implements OrdenMantenimientoMapper {
         entity.setFechaFin(dto.getFechaFin());
         entity.setObservaciones(dto.getObservaciones());
         entity.setCosto(dto.getCosto());
+        entity.setOrdenId(dto.getOrdenId());
+        entity.setActivoNombre(dto.getActivoNombre());
+        entity.setUbicacion(dto.getUbicacion());
+        entity.setOrigen(dto.getOrigen());
+        entity.setOrigenId(dto.getOrigenId());
+        entity.setProgreso(dto.getProgreso());
 
         /**
          * Actualiza una entidad existente con los datos del DTO.
