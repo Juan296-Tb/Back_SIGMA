@@ -130,4 +130,15 @@ public class UsuarioServiceImple implements UsuarioService {
         auth.setRoles(List.of(Rol.valueOf(rol)));
         authRepo.save(auth);
     }
+
+    @Override
+    public List<UsuarioDto> listarPorRol(String rol) {
+        Rol rolEnum = Rol.valueOf(rol);
+        return authRepo.findAll().stream()
+            .filter(auth -> auth.getRoles() != null && auth.getRoles().contains(rolEnum))
+            .map(auth -> userRepo.findById(auth.getId()).orElse(null))
+            .filter(usuario -> usuario != null)
+            .map(userMapper::toDto)
+            .toList();
+}
 }

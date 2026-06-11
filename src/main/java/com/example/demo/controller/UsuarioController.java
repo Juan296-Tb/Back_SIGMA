@@ -89,4 +89,9 @@ public class UsuarioController {
         usuarioService.cambiarRol(id, body.get("rol"));
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/por-rol")
+    public ResponseEntity<List<UsuarioDto>> porRol(@RequestParam String rol) {
+        return ResponseEntity.ok(usuarioService.listarPorRol(rol));
+    }
 }

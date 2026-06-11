@@ -15,4 +15,5 @@ public interface UsuarioService {
     UsuarioRegistroDto registrarUsuario(UsuarioRegistroDto dto);
     UsuarioDto buscarPorUsername(String username);
     void cambiarRol(String id, String rol);
+    List<UsuarioDto> listarPorRol(String rol);
 }

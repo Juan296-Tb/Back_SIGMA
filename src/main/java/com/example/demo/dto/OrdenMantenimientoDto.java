@@ -21,7 +21,6 @@ public class OrdenMantenimientoDto {
     private String id;
     private String ordenId; 
 
-    @NotBlank(message = "La descripción es obligatoria")
     private String descripcion;
 
     private EstadoOrden estado;
