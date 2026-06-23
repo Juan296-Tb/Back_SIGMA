@@ -9,6 +9,7 @@ import com.example.demo.dto.OrdenMantenimientoDto;
 import com.example.demo.mapper.OrdenMantenimientoMapper;
 import com.example.demo.models.EstadoOrden;
 import com.example.demo.models.OrdenMantenimiento;
+import com.example.demo.models.PrioridadTicket;
 import com.example.demo.repositories.OrdenMantenimientoRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,11 @@ public class OrdenMantenimientoService {
     public OrdenMantenimientoDto crear(OrdenMantenimientoDto dto) {
         OrdenMantenimiento entity = mapper.toEntity(dto);
 
-        // Generar ordenId automático si no viene del frontend
+        // Valores por defecto si vienen nulos
+        if (entity.getEstado() == null) entity.setEstado(EstadoOrden.PENDIENTE);
+        if (entity.getPrioridad() == null) entity.setPrioridad(PrioridadTicket.MEDIA);
+
+        // Generar ordenId automático
         if (entity.getOrdenId() == null || entity.getOrdenId().isBlank()) {
             String numero = String.format("%03d", (int)(Math.random() * 900) + 100);
             entity.setOrdenId("OT-" + numero);

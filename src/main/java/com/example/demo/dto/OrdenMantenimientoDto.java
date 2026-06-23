@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 
 @Data
 @AllArgsConstructor
@@ -23,9 +25,10 @@ public class OrdenMantenimientoDto {
 
     private String descripcion;
 
+    @JsonSetter(nulls = Nulls.SKIP)
     private EstadoOrden estado;
 
-    @NotNull(message = "El tipo es obligatorio")
+    @JsonSetter(nulls = Nulls.SKIP)
     private TipoMantenimiento tipo;
 
     @NotBlank(message = "El activo es obligatorio")
@@ -42,6 +45,7 @@ public class OrdenMantenimientoDto {
     private String ticketId;
     private String origen;
     private String origenId;
+    @JsonSetter(nulls = Nulls.SKIP)
     private PrioridadTicket prioridad;
 
     private String ventana;
