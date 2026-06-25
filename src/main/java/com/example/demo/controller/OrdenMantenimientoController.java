@@ -68,4 +68,9 @@ public class OrdenMantenimientoController {
             @RequestParam String nuevoEstado) {
         return ResponseEntity.ok(service.cambiarEstado(id, nuevoEstado));
     }
+
+    @GetMapping("/asignado/{email}")
+    public ResponseEntity<List<OrdenMantenimientoDto>> porEmail(@PathVariable String email) {
+        return ResponseEntity.ok(service.listarPorEmail(email));
+    }
 }

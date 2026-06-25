@@ -103,4 +103,11 @@ public class OrdenMantenimientoService {
         orden.setEstado(EstadoOrden.valueOf(nuevoEstado));
         return mapper.toDto(repository.save(orden));
     }
+
+    public List<OrdenMantenimientoDto> listarPorEmail(String email) {
+        return repository.findAll().stream()
+            .filter(o -> email.equals(o.getTecnicoId()) || email.equals(o.getTecnicoNombre()))
+            .map(mapper::toDto)
+            .collect(Collectors.toList());
+    }
 }

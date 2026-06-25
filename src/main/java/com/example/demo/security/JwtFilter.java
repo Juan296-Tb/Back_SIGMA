@@ -32,14 +32,16 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+        String authHeader = request.getHeader("Authorization");
+
+        System.out.println("PATH: " + path);
+        System.out.println("AUTH HEADER: " + authHeader);
 
         // 🔥 EXCLUIR ENDPOINTS PÚBLICOS (CLAVE PARA TU 403)
         if (path.startsWith("/tickets") || path.startsWith("/api/tickets")) {
             filterChain.doFilter(request, response);
             return;
         }
-
-        String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -63,6 +65,7 @@ public class JwtFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
         } catch (Exception e) {
+            System.out.println("Error JWT: " + e.getMessage()); // 👈 agrega esto
             SecurityContextHolder.clearContext();
         }
 

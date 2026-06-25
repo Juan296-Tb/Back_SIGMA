@@ -142,6 +142,17 @@ public class TicketController {
         return ResponseEntity.ok(resultado);
     }
 
+    // Tickets por email del técnico asignado
+    @GetMapping("/asignado/{email}")
+    public ResponseEntity<List<TicketDto>> porEmail(@PathVariable String email) {
+        List<TicketDto> resultado = ticketRepository.findAll()
+                .stream()
+                .filter(t -> t.getAsignadoId() != null && t.getAsignadoId().equals(email))
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(resultado);
+    }
+
     // Cambiar solo el estado
     @PatchMapping("/{id}/estado")
     public ResponseEntity<TicketDto> cambiarEstado(
