@@ -17,52 +17,59 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
 
-        private final DetallesUsuarioService detallesUsuarioService;
-        private final PasswordEncoder passwordEncoder;
-        private final JwtFilter jwtFilter;
+    private final DetallesUsuarioService detallesUsuarioService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtFilter jwtFilter;
 
-        public SecurityConfig(
-                DetallesUsuarioService detallesUsuarioService,
-                PasswordEncoder passwordEncoder,
-                JwtFilter jwtFilter) {
+    public SecurityConfig(
+            DetallesUsuarioService detallesUsuarioService,
+            PasswordEncoder passwordEncoder,
+            JwtFilter jwtFilter) {
+
         this.detallesUsuarioService = detallesUsuarioService;
         this.passwordEncoder = passwordEncoder;
         this.jwtFilter = jwtFilter;
-        }
+    }
 
-        @Bean
-        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/api/usuarios/**").permitAll()
-                .requestMatchers("/api/activos/**").permitAll()
-                .requestMatchers("/api/tickets/**").permitAll()
-                .requestMatchers("/api/ordenes/**").permitAll()
-                .requestMatchers(
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/swagger-ui.html"
-                ).permitAll()
-                .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-        }
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/usuarios/**").permitAll()
+                        .requestMatchers("/api/activos/**").permitAll()
+                        .requestMatchers("/api/tickets/**").permitAll()
+                        .requestMatchers("/api/ordenes/**").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(
+                        jwtFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
-        @Bean
-        public CorsConfigurationSource corsConfigurationSource() {
+        return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOriginPatterns(List.of("*"));
 
         config.setAllowedMethods(List.of(
-                "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
-        ));
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "PATCH",
+                "OPTIONS"));
 
         config.setAllowedHeaders(List.of("*"));
 
@@ -70,18 +77,23 @@ public class SecurityConfig {
 
         config.setAllowCredentials(false);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
         source.registerCorsConfiguration("/**", config);
 
         return source;
-        }
+    }
 
-        @Bean
-        public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
+    @Bean
+    public AuthenticationManager authenticationManager(
+            HttpSecurity http) throws Exception {
+
+        return http
+                .getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(detallesUsuarioService)
                 .passwordEncoder(passwordEncoder)
                 .and()
                 .build();
-        }
+    }
 }
