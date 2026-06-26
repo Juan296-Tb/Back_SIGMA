@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.dto.UsuarioDto;
 import com.example.demo.dto.UsuarioRegistroDto;
 import com.example.demo.services.UsuarioService;
+import com.example.demo.models.Ticket;
+import com.example.demo.models.Activo;
+import com.example.demo.repositories.TicketRepository;
+import com.example.demo.repositories.ActivoRepository;
 
 import jakarta.validation.Valid;
 
@@ -20,10 +25,19 @@ import jakarta.validation.Valid;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final TicketRepository ticketRepository;
+    private final ActivoRepository activoRepository;
 
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(
+            UsuarioService usuarioService,
+            TicketRepository ticketRepository,
+            ActivoRepository activoRepository) {
+
         this.usuarioService = usuarioService;
+        this.ticketRepository = ticketRepository;
+        this.activoRepository = activoRepository;
     }
+
 
     @PostMapping()
     public ResponseEntity<UsuarioDto> crear(@RequestBody UsuarioDto usuarioDto) {
@@ -86,6 +100,7 @@ public class UsuarioController {
     public ResponseEntity<?> cambiarRol(
             @PathVariable String id,
             @RequestBody Map<String, String> body) {
+
         usuarioService.cambiarRol(id, body.get("rol"));
         return ResponseEntity.ok().build();
     }
@@ -93,5 +108,31 @@ public class UsuarioController {
     @GetMapping("/por-rol")
     public ResponseEntity<List<UsuarioDto>> porRol(@RequestParam String rol) {
         return ResponseEntity.ok(usuarioService.listarPorRol(rol));
+    }
+
+
+    @GetMapping("/{id}/dashboard")
+    public ResponseEntity<Map<String, Object>> dashboard(@PathVariable String id) {
+
+        // TICKETS asignados al usuario
+        List<Ticket> tickets = ticketRepository.findAll()
+                .stream()
+                .filter(t -> id.equals(t.getAsignadoId()))
+                .collect(Collectors.toList());
+
+        // ACTIVOS asignados al usuario
+        List<Activo> activos = activoRepository.findAll()
+                .stream()
+                .filter(a -> id.equals(a.getResponsable()))
+                .collect(Collectors.toList());
+
+        // respuesta para Flutter
+        Map<String, Object> response = Map.of(
+                "nombre", id, // luego puedes cambiarlo por nombre real si quieres
+                "tickets", tickets,
+                "activos", activos
+        );
+
+        return ResponseEntity.ok(response);
     }
 }
